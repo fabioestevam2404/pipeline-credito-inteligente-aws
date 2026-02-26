@@ -1,0 +1,60 @@
+# ============================================================
+# .gitignore — Pipeline de Crédito AWS
+# ============================================================
+
+# ── Terraform State (NUNCA commitar) ─────────────────────────
+*.tfstate
+*.tfstate.*
+*.tfstate.backup
+.terraform/
+.terraform.lock.hcl
+crash.log
+crash.*.log
+
+# ── Variáveis com segredos ────────────────────────────────────
+*.tfvars
+*.tfvars.json
+# Exceção: arquivo de exemplo sem valores reais
+!*.tfvars.example
+
+# ── Lambda zips (gerados no deploy) ──────────────────────────
+dist/
+*.zip
+
+# ── Python ───────────────────────────────────────────────────
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+venv/
+env/
+.env
+.venv
+*.egg-info/
+dist/
+build/
+.pytest_cache/
+.coverage
+htmlcov/
+.mypy_cache/
+
+# ── AWS Credentials (NUNCA commitar) ─────────────────────────
+.aws/
+credentials
+*.pem
+*.key
+
+# ── IDEs ─────────────────────────────────────────────────────
+.idea/
+.vscode/
+*.swp
+*.swo
+.DS_Store
+
+# ── Documentos comerciais e internos ─────────────────────────
+PROPOSTA_COMERCIAL.md
+*.docx
+
+# ── Claude Code ──────────────────────────────────────────────
+.claude/

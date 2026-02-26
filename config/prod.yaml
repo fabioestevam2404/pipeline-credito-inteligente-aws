@@ -1,0 +1,27 @@
+environment: prod
+aws_region: us-east-1
+
+pipeline:
+  schedule: "cron(0 2 * * ? *)"   # 02:00 UTC
+  max_retries: 3
+  timeout_minutes: 180
+
+data_quality:
+  max_drop_rate_pct: 20           # Pipeline falha se > 20% de registros descartados
+  min_records_per_run: 1000
+
+credit_policy:
+  score_aprovado:        700
+  score_analise_manual:  500
+  # Abaixo de 500 = NEGADO automaticamente
+
+monitoring:
+  latency_alarm_ms:    300        # Alarme P99 latencia score
+  error_rate_alarm_pct: 5         # Alarme taxa de erro Lambda
+  low_volume_threshold: 1000      # Alarme volume baixo de ingestao
+
+retention:
+  raw_days:        90
+  silver_days:     730
+  gold_days:       1825
+  audit_years:     5              # Exigido pelo Banco Central

@@ -1,0 +1,34 @@
+# Pipeline de Crédito — Dependências Python
+# Instalar com: pip install -r requirements.txt
+
+# AWS SDK
+boto3==1.34.0
+botocore==1.34.0
+
+# PySpark / Glue (local dev)
+pyspark==3.4.2
+
+# SageMaker
+sagemaker==2.203.0
+
+# Data processing
+pandas==2.1.4
+numpy==1.26.2
+pyarrow==14.0.2       # Parquet / Iceberg
+
+# Qualidade de dados
+great-expectations==0.18.8
+
+# Testes
+pytest==7.4.3
+pytest-mock==3.12.0
+moto==4.2.14          # Mock AWS services para testes
+
+# Utilitários
+python-dotenv==1.0.0
+click==8.1.7          # CLI scripts
+loguru==0.7.2         # Logging estruturado
+tenacity==8.2.3       # Retry logic
+
+# Segurança / LGPD
+cryptography==41.0.8

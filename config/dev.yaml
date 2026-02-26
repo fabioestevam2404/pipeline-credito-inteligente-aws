@@ -1,0 +1,26 @@
+environment: dev
+aws_region: us-east-1
+
+pipeline:
+  schedule: "DISABLED"
+  max_retries: 1
+  timeout_minutes: 60
+
+data_quality:
+  max_drop_rate_pct: 50
+  min_records_per_run: 10
+
+credit_policy:
+  score_aprovado:        700
+  score_analise_manual:  500
+
+monitoring:
+  latency_alarm_ms:    1000
+  error_rate_alarm_pct: 20
+  low_volume_threshold: 10
+
+retention:
+  raw_days:     30
+  silver_days:  90
+  gold_days:    180
+  audit_years:  1

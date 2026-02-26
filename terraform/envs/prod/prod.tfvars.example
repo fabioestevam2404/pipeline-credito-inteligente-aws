@@ -1,0 +1,6 @@
+aws_region        = "us-east-1"
+environment       = "prod"
+alert_email       = "data-eng@empresa.com"
+crm_host          = "crm-postgres.internal.empresa.com"
+crm_database      = "credit_db"
+private_subnet_id = "subnet-xxxxxxxxxx"
