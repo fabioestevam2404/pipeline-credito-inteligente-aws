@@ -9,18 +9,16 @@ Combina 3 fontes de dados e calcula o vetor de features final:
 
 Saída: S3 Gold (Parquet) — ingerido no SageMaker Feature Store pela Lambda seguinte
 """
-import sys
 import logging
+import sys
 from datetime import datetime
 
 from awsglue.context import GlueContext
 from awsglue.job import Job
 from awsglue.utils import getResolvedOptions
 from pyspark.context import SparkContext
-from pyspark.sql import functions as F, DataFrame
-from pyspark.sql.window import Window
-
-import boto3
+from pyspark.sql import DataFrame
+from pyspark.sql import functions as F
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO)

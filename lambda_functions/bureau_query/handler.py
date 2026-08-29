@@ -2,8 +2,13 @@
 Lambda: Consulta de Bureau (Serasa/SPC)
 Trigger: Step Functions ou API Gateway
 """
-import json, hashlib, time, boto3, requests
+import hashlib
+import json
+import time
 from datetime import datetime, timezone
+
+import boto3
+import requests
 
 s3      = boto3.client("s3")
 secrets = boto3.client("secretsmanager")

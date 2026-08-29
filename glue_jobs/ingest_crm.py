@@ -3,8 +3,11 @@ Glue Job: Ingestão Incremental do CRM
 Camada: Bronze (Raw)
 Frequência: Diária via Step Functions
 """
-import sys, json, boto3
+import json
+import sys
 from datetime import datetime
+
+import boto3
 from awsglue.context import GlueContext
 from awsglue.job import Job
 from awsglue.utils import getResolvedOptions
@@ -21,6 +24,11 @@ job.init(args["JOB_NAME"], args)
 RUN_DATE   = args["run_date"]
 RAW_BUCKET = args["RAW_BUCKET"]
 ENV        = args["ENVIRONMENT"]
+
+# Valida o formato antes de interpolar na query JDBC — o conector JDBC do
+# Spark não aceita query parametrizada em .option("query", ...), então a
+# validação estrita é a mitigação real aqui (ver bandit B608).
+datetime.strptime(RUN_DATE, "%Y-%m-%d")
 
 
 def get_secret(name):

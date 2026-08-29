@@ -3,12 +3,12 @@ src/utils/aws_helpers.py
 Utilitários compartilhados para interação com serviços AWS.
 Usados por todos os módulos do pipeline.
 """
-import json
 import hashlib
+import json
 import logging
 from datetime import datetime
-from functools import lru_cache
-from typing import Any, Optional
+from functools import cache, lru_cache
+from typing import Any
 
 import boto3
 from botocore.exceptions import ClientError
@@ -17,13 +17,13 @@ from tenacity import retry, stop_after_attempt, wait_exponential
 logger = logging.getLogger(__name__)
 
 # ── Clientes AWS (singleton por sessão) ───────────────────────
-@lru_cache(maxsize=None)
+@cache
 def get_client(service: str, region: str = "us-east-1"):
     """Retorna cliente AWS cacheado (evita reconexões desnecessárias)."""
     return boto3.client(service, region_name=region)
 
 
-@lru_cache(maxsize=None)
+@cache
 def get_resource(service: str, region: str = "us-east-1"):
     """Retorna resource AWS cacheado."""
     return boto3.resource(service, region_name=region)
@@ -87,7 +87,7 @@ def validate_cpf_format(cpf: str) -> bool:
 
 # ── S3 Helpers ────────────────────────────────────────────────
 def s3_put_json(bucket: str, key: str, data: Any,
-                kms_key_arn: Optional[str] = None) -> str:
+                kms_key_arn: str | None = None) -> str:
     """
     Serializa data para JSON e salva no S3 com criptografia KMS.
 
@@ -124,7 +124,7 @@ def s3_key_exists(bucket: str, key: str) -> bool:
 
 # ── CloudWatch Métricas ───────────────────────────────────────
 def publish_metric(namespace: str, metric_name: str, value: float,
-                   unit: str = "Count", dimensions: Optional[dict] = None):
+                   unit: str = "Count", dimensions: dict | None = None):
     """Publica métrica customizada no CloudWatch."""
     cw = get_client("cloudwatch")
     metric = {
@@ -158,7 +158,7 @@ def with_retry(max_attempts: int = 3, min_wait: int = 1, max_wait: int = 60):
 
 
 # ── Particionamento S3 ────────────────────────────────────────
-def s3_partition_path(base: str, date: Optional[datetime] = None) -> str:
+def s3_partition_path(base: str, date: datetime | None = None) -> str:
     """
     Gera path S3 particionado por data (Hive-style).
 

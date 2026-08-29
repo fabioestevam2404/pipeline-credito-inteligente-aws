@@ -2,8 +2,11 @@
 Lambda: Kinesis Consumer — Transacoes em Tempo Real
 Trigger: Kinesis Data Stream (batch de ate 500 registros)
 """
-import json, base64, boto3
+import base64
+import json
 from datetime import datetime, timezone
+
+import boto3
 
 s3  = boto3.client("s3")
 cw  = boto3.client("cloudwatch")

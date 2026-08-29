@@ -9,12 +9,14 @@ variable "ingest_crm_job_name"       {}
 variable "silver_processing_job_name"{}
 variable "feature_engineering_job_name" {}
 variable "bureau_lambda_arn"         {}
-variable "alert_topic_arn"           {}
+variable "alert_email"               {}
+variable "credit_key_arn"            {}
 variable "gold_bucket"               {}
 variable "artifacts_bucket"          {}
 
 resource "aws_sns_topic" "alerts" {
-  name = "credit-pipeline-alerts-${var.environment}"
+  name              = "credit-pipeline-alerts-${var.environment}"
+  kms_master_key_id = var.credit_key_arn
 }
 
 resource "aws_sns_topic_subscription" "email" {
@@ -177,7 +179,7 @@ resource "aws_sfn_state_machine" "credit_pipeline" {
         Type     = "Task"
         Resource = "arn:aws:states:::sns:publish"
         Parameters = {
-          TopicArn  = var.alert_topic_arn
+          TopicArn  = aws_sns_topic.alerts.arn
           "Subject" = "✅ Pipeline de Crédito — Sucesso"
           "Message.$" = "States.Format('Pipeline concluído com sucesso para a data: {}', $.run_date)"
         }
@@ -188,7 +190,7 @@ resource "aws_sfn_state_machine" "credit_pipeline" {
         Type     = "Task"
         Resource = "arn:aws:states:::sns:publish"
         Parameters = {
-          TopicArn  = var.alert_topic_arn
+          TopicArn  = aws_sns_topic.alerts.arn
           Subject   = "🚨 Pipeline de Crédito — FALHA"
           "Message.$" = "States.Format('Pipeline falhou na data: {}. Erro: {}', $.run_date, $.error)"
         }
@@ -199,7 +201,7 @@ resource "aws_sfn_state_machine" "credit_pipeline" {
         Type     = "Task"
         Resource = "arn:aws:states:::sns:publish"
         Parameters = {
-          TopicArn = var.alert_topic_arn
+          TopicArn = aws_sns_topic.alerts.arn
           Subject  = "⚠️ Data Quality — Pipeline Interrompido"
           Message  = "Data Quality falhou. Pipeline interrompido para revisão manual dos dados."
         }

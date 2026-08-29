@@ -10,6 +10,9 @@ variable "raw_bucket"          {}
 variable "silver_bucket"       {}
 variable "gold_bucket"         {}
 variable "credit_key_arn"      {}
+variable "crm_host"            {}
+variable "crm_database"        {}
+variable "private_subnet_id"   {}
 
 # ── Glue Database ─────────────────────────────────────────────────────────────
 resource "aws_glue_catalog_database" "credit_db" {

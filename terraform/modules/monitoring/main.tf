@@ -5,6 +5,7 @@ variable "account_id"        {}
 variable "aws_region"        {}
 variable "alert_topic_arn"   {}
 variable "score_endpoint"    {}
+variable "audit_key_arn"     {}
 
 # ── Alarmes CloudWatch ────────────────────────────────────────────────────────
 
@@ -95,14 +96,14 @@ resource "aws_cloudwatch_dashboard" "credit_pipeline" {
     widgets = [
       {
         type   = "text"
-        x = 0; y = 0; width = 24; height = 1
+        x = 0, y = 0, width = 24, height = 1
         properties = {
           markdown = "# Pipeline de Crédito — ${upper(var.environment)} | Atualizado em tempo real"
         }
       },
       {
         type = "metric"
-        x = 0; y = 1; width = 8; height = 6
+        x = 0, y = 1, width = 8, height = 6
         properties = {
           title  = "Score Endpoint — Latência P99"
           metrics = [[
@@ -116,7 +117,7 @@ resource "aws_cloudwatch_dashboard" "credit_pipeline" {
       },
       {
         type = "metric"
-        x = 8; y = 1; width = 8; height = 6
+        x = 8, y = 1, width = 8, height = 6
         properties = {
           title  = "Ingestão — Registros por Execução"
           metrics = [
@@ -129,7 +130,7 @@ resource "aws_cloudwatch_dashboard" "credit_pipeline" {
       },
       {
         type = "metric"
-        x = 16; y = 1; width = 8; height = 6
+        x = 16, y = 1, width = 8, height = 6
         properties = {
           title  = "Lambda Score — Erros e Invocações"
           metrics = [
@@ -141,7 +142,7 @@ resource "aws_cloudwatch_dashboard" "credit_pipeline" {
       },
       {
         type = "alarm"
-        x = 0; y = 7; width = 24; height = 3
+        x = 0, y = 7, width = 24, height = 3
         properties = {
           title  = "Status dos Alarmes"
           alarms = [

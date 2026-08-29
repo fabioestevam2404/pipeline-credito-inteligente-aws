@@ -9,19 +9,19 @@ Depende de:
   - Tabela Iceberg credit_db.clientes_silver já criada (ver create_iceberg_tables.sql)
   - Glue version 4.0 com suporte a Iceberg
 """
-import sys
 import logging
+import sys
 from datetime import datetime
 
+import boto3
 from awsglue.context import GlueContext
 from awsglue.job import Job
 from awsglue.utils import getResolvedOptions
 from pyspark.context import SparkContext
-from pyspark.sql import functions as F, DataFrame
-from pyspark.sql.window import Window
+from pyspark.sql import DataFrame
+from pyspark.sql import functions as F
 from pyspark.sql.types import DoubleType
-
-import boto3
+from pyspark.sql.window import Window
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO)
