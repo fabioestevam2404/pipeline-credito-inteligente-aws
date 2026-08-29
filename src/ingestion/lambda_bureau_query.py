@@ -5,16 +5,15 @@ Persiste a resposta bruta no S3 Raw para auditoria e reprocessamento.
 
 Invocado por: API Gateway (score request) ou Step Functions (batch)
 """
-import json
-import time
 import hashlib
+import json
 import logging
+import os
+import time
 from datetime import datetime
-from typing import Optional
 
 import boto3
 import requests
-from botocore.exceptions import ClientError
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -24,13 +23,14 @@ s3      = boto3.client("s3")
 secrets = boto3.client("secretsmanager")
 
 # Configurações (via variáveis de ambiente)
-import os
 RAW_BUCKET  = os.environ.get("RAW_BUCKET", "credit-pipeline-raw")
 KMS_KEY_ARN = os.environ.get("KMS_KEY_ARN", "alias/credit-pipeline-key")
 ENVIRONMENT = os.environ.get("ENVIRONMENT", "prod")
 
-# Cache do token de autenticação (válido por ~55 min)
-_token_cache: dict = {"token": None, "expires_at": 0}
+# Cache do token de autenticação (válido por ~55 min) — "token" aqui é só a
+# chave do dict, valor inicial None; a credencial real vem do Secrets Manager
+# (get_bureau_credentials abaixo), não é um segredo hardcoded.
+_token_cache: dict = {"token": None, "expires_at": 0}  # nosec B105
 
 
 def get_bureau_credentials() -> dict:

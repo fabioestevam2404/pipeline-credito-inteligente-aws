@@ -3,8 +3,11 @@ Lambda: Scoring de Credito em Tempo Real
 SLA: < 200ms (P99)
 Trigger: API Gateway POST /score
 """
-import json, time, boto3
+import json
+import time
 from datetime import datetime, timezone
+
+import boto3
 
 sm_runtime = boto3.client("sagemaker-runtime")
 fs_runtime = boto3.client("sagemaker-featurestore-runtime")

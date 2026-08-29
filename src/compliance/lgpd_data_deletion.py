@@ -15,11 +15,11 @@ Uso:
         --request-id <ID_DA_SOLICITACAO> \
         --requester "João Silva - Protocolo #12345"
 """
+import argparse
 import json
 import logging
-import argparse
+import os
 from datetime import datetime
-from typing import Optional
 
 import boto3
 from botocore.exceptions import ClientError
@@ -30,7 +30,6 @@ logging.basicConfig(
     format="%(asctime)s [%(levelname)s] %(message)s"
 )
 
-import os
 REGION           = os.environ.get("AWS_REGION",        "us-east-1")
 FEATURE_GROUP    = os.environ.get("FEATURE_GROUP",     "credit-features-v1")
 AUDIT_TABLE      = os.environ.get("AUDIT_TABLE",       "credit-score-audit")
@@ -67,7 +66,7 @@ class LGPDDeletionService:
         except ClientError as e:
             code = e.response["Error"]["Code"]
             if code == "ResourceNotFoundException":
-                logger.info(f"Feature Store: registro não encontrado (já deletado?)")
+                logger.info("Feature Store: registro não encontrado (já deletado?)")
                 return {"status": "not_found", "store": "feature_store_online"}
             raise
 
@@ -250,7 +249,7 @@ if __name__ == "__main__":
     if args.dry_run:
         logger.info("🔍 DRY RUN — nenhum dado será deletado")
         logger.info(f"Simularia deleção de: cpf_hash={args.cpf_hash[:12]}***")
-        logger.info(f"Operações que seriam executadas:")
+        logger.info("Operações que seriam executadas:")
         logger.info("  1. Feature Store Online: delete_record()")
         logger.info("  2. DynamoDB Audit: anonimização dos registros")
         logger.info("  3. S3 Gold: enfileiramento no S3 Batch Operations")

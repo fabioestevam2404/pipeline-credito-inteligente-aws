@@ -3,6 +3,9 @@ Glue Job: Processamento Silver (Limpeza + Iceberg UPSERT)
 Camada: Silver
 """
 import sys
+from datetime import datetime
+
+import boto3
 from awsglue.context import GlueContext
 from awsglue.job import Job
 from awsglue.utils import getResolvedOptions
@@ -30,7 +33,6 @@ spark.conf.set("spark.sql.catalog.glue_catalog",
 spark.conf.set("spark.sql.catalog.glue_catalog.warehouse",
     f"s3://{SILVER_BUCKET}/")
 
-from datetime import datetime
 run_dt = datetime.strptime(RUN_DATE, "%Y-%m-%d")
 raw_path = f"s3://{RAW_BUCKET}/crm/clientes/year={run_dt.year}/month={run_dt.month:02d}/day={run_dt.day:02d}/"
 
@@ -93,6 +95,9 @@ print(f"[Silver] {final_count} registros unicos apos deduplicacao")
 df_dedup.createOrReplaceTempView("updates")
 
 # Cria tabela se nao existir
+# Bandit B608 (SQL via string): só ENV/SILVER_BUCKET (config de deploy, não
+# dado em runtime) são interpolados aqui; RUN_DATE já foi validado como data
+# ISO na linha 34 e nem entra nesta query.
 spark.sql(f"""
     CREATE TABLE IF NOT EXISTS glue_catalog.credit_db_{ENV}.clientes_silver
     USING iceberg
@@ -101,6 +106,8 @@ spark.sql(f"""
     AS SELECT * FROM updates WHERE 1=0
 """)
 
+# Bandit B608: mesmo caso acima, só ENV é interpolado, RUN_DATE não aparece
+# nesta query.
 spark.sql(f"""
     MERGE INTO glue_catalog.credit_db_{ENV}.clientes_silver AS t
     USING updates AS s ON t.cpf_hash = s.cpf_hash
@@ -116,7 +123,6 @@ spark.sql(f"""
     WHEN NOT MATCHED THEN INSERT *
 """)
 
-import boto3
 boto3.client("cloudwatch").put_metric_data(
     Namespace="CreditPipeline/Custom",
     MetricData=[

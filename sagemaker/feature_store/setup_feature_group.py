@@ -3,10 +3,10 @@ SageMaker Feature Store — Setup e Ingestao Batch
 Execute UMA vez para criar o Feature Group.
 Para ingestao diaria, use ingest_features.py (chamado pelo Step Functions).
 """
+
 import boto3
+
 import sagemaker
-import pandas as pd
-from datetime import datetime
 
 sess   = sagemaker.Session()
 region = sess.boto_region_name

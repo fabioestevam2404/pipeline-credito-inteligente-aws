@@ -31,4 +31,4 @@ loguru==0.7.2         # Logging estruturado
 tenacity==8.2.3       # Retry logic
 
 # Segurança / LGPD
-cryptography==41.0.8
+cryptography==41.0.7

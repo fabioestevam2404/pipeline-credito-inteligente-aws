@@ -8,16 +8,16 @@ Fluxo:
 Execução incremental por bookmark do Glue (job-bookmark-enable).
 Também suporta execução por --run_date para reprocessamento manual.
 """
-import sys
 import logging
+import sys
 from datetime import datetime, timedelta
 
+import boto3
 from awsglue.context import GlueContext
 from awsglue.job import Job
 from awsglue.utils import getResolvedOptions
 from pyspark.context import SparkContext
 from pyspark.sql import functions as F
-from pyspark.sql.types import StructType, StructField, StringType, DoubleType, DateType, TimestampType
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO)
@@ -61,6 +61,10 @@ else:
     where_clause = "1=1"
     logger.info("Modo incremental com Glue Job Bookmark")
 
+# Bandit B608 (SQL via string): run_date já foi validado como data ISO na
+# linha 55 antes de entrar em where_clause — o conector JDBC do Spark não
+# aceita query parametrizada em .option("query", ...), então essa validação
+# estrita é a mitigação real aqui.
 INGEST_QUERY = f"""
     SELECT
         client_id                           AS client_id,
@@ -135,7 +139,6 @@ logger.info(f"Gravando em {output_path} (particionado por year/month/day)...")
     .parquet(output_path))
 
 # ── Publicação de Métricas ────────────────────────────────────
-import boto3
 cw = boto3.client("cloudwatch")
 cw.put_metric_data(
     Namespace  = "CreditPipeline/Custom",

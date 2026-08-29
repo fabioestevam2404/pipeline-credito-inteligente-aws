@@ -100,6 +100,7 @@ module "step_functions" {
   gold_bucket                  = module.s3.gold_bucket_name
   artifacts_bucket             = module.s3.artifacts_bucket_name
   alert_email                  = var.alert_email
+  credit_key_arn               = module.kms.credit_key_arn
   depends_on                   = [module.glue, module.lambda]
 }
 

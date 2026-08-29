@@ -5,9 +5,10 @@ Testes unitários para o Lambda de scoring de crédito.
 Execução: pytest tests/ -v
 """
 import json
-import pytest
-from unittest.mock import MagicMock, patch, call
 from datetime import datetime
+from unittest.mock import patch
+
+import pytest
 
 
 # ── Fixtures ─────────────────────────────────────────────────
@@ -15,7 +16,7 @@ from datetime import datetime
 def valid_cpf_hash():
     """SHA-256 válido de um CPF de teste."""
     import hashlib
-    return hashlib.sha256("12345678901".encode()).hexdigest()
+    return hashlib.sha256(b"12345678901").hexdigest()
 
 
 @pytest.fixture
@@ -64,7 +65,7 @@ def sample_features():
 # ── Testes: build_feature_vector ─────────────────────────────
 class TestBuildFeatureVector:
     def test_retorna_vetor_com_ordem_correta(self, sample_features):
-        from src.scoring.lambda_credit_score import build_feature_vector, FEATURE_ORDER
+        from src.scoring.lambda_credit_score import FEATURE_ORDER, build_feature_vector
         vector = build_feature_vector(sample_features)
         assert len(vector) == len(FEATURE_ORDER)
         assert all(isinstance(v, float) for v in vector)

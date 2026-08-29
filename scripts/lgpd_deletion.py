@@ -2,8 +2,12 @@
 Script: Direito ao Esquecimento (LGPD Art. 18)
 Uso: python lgpd_deletion.py --cpf-hash <hash> --request-id <id> --env prod
 """
-import argparse, json, time, boto3
+import argparse
+import json
 from datetime import datetime, timezone
+
+import boto3
+
 
 def main():
     parser = argparse.ArgumentParser(description="LGPD Data Deletion")
@@ -115,12 +119,12 @@ def main():
             )
             print(f"[LGPD] 4/4 Log de conformidade salvo: s3://{bucket}/{key}")
         else:
-            print(f"[LGPD] 4/4 Log de conformidade: simulado (dry run)")
+            print("[LGPD] 4/4 Log de conformidade: simulado (dry run)")
     except Exception as e:
         print(f"[LGPD] 4/4 Log de conformidade: ERRO - {e}")
 
     # Resultado final
-    print("")
+    print()
     if errors:
         print(f"[LGPD] CONCLUIDO COM ERROS: {len(errors)} passos falharam")
         for e in errors:

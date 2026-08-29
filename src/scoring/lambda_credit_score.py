@@ -13,10 +13,10 @@ Fluxo de uma requisição (<200ms target):
 Invocado por: API Gateway (REST)
 """
 import json
-import time
 import logging
+import os
+import time
 from datetime import datetime
-from typing import Optional
 
 import boto3
 from botocore.exceptions import ClientError
@@ -24,7 +24,6 @@ from botocore.exceptions import ClientError
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
-import os
 ENDPOINT_NAME = os.environ.get("ENDPOINT_NAME", "credit-score-model-v1")
 FEATURE_GROUP = os.environ.get("FEATURE_GROUP", "credit-features-v1")
 AUDIT_TABLE   = os.environ.get("AUDIT_TABLE",   "credit-score-audit")
@@ -59,7 +58,7 @@ CREDIT_POLICY = {
 }
 
 
-def get_features_online(cpf_hash: str) -> Optional[dict]:
+def get_features_online(cpf_hash: str) -> dict | None:
     """
     Busca features no Feature Store Online.
     Latência esperada: 5-15ms.

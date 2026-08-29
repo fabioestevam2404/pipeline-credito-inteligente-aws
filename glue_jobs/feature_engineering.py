@@ -2,13 +2,14 @@
 Glue Job: Feature Engineering
 Camada: Gold — calcula features para o modelo de credito
 """
-import sys, boto3
+import sys
+from datetime import datetime as _datetime
+
 from awsglue.context import GlueContext
 from awsglue.job import Job
 from awsglue.utils import getResolvedOptions
 from pyspark.context import SparkContext
 from pyspark.sql import functions as F
-from pyspark.sql.window import Window
 
 args = getResolvedOptions(sys.argv, ["JOB_NAME", "run_date", "SILVER_BUCKET", "GOLD_BUCKET", "ENVIRONMENT"])
 sc = SparkContext()
@@ -21,6 +22,11 @@ RUN_DATE      = args["run_date"]
 SILVER_BUCKET = args["SILVER_BUCKET"]
 GOLD_BUCKET   = args["GOLD_BUCKET"]
 ENV           = args["ENVIRONMENT"]
+
+# Valida o formato antes de interpolar em SQL — RUN_DATE vem de um parâmetro
+# de job (Step Functions/EventBridge), não de input de usuário, mas isso
+# garante que só uma data bem formada chega até a query (ver bandit B608).
+_datetime.strptime(RUN_DATE, "%Y-%m-%d")
 
 # ── Leitura das 3 fontes Silver ────────────────────────────────────────────
 print("[Features] Lendo dados Silver...")

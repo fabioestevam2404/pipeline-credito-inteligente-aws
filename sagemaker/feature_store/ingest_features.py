@@ -2,9 +2,12 @@
 SageMaker Processing Job: Ingestao de Features no Feature Store
 Chamado pelo Step Functions diariamente apos o Feature Engineering job.
 """
-import os, sys, boto3, argparse
+import argparse
+
+import boto3
 import pandas as pd
-from datetime import datetime
+import pyarrow.parquet as pq
+import s3fs
 
 # Argumentos passados pelo Step Functions
 parser = argparse.ArgumentParser()
@@ -22,9 +25,6 @@ print(f"[FeatureStore] Ingestao para run_date={RUN_DATE}")
 # Lê features do S3 Gold
 s3_path = (f"s3://{GOLD_BUCKET}/features/"
            f"year={RUN_DATE[:4]}/month={RUN_DATE[5:7]}/day={RUN_DATE[8:10]}/")
-
-import pyarrow.parquet as pq
-import s3fs
 
 fs = s3fs.S3FileSystem()
 dataset = pq.read_table(s3_path, filesystem=fs)
